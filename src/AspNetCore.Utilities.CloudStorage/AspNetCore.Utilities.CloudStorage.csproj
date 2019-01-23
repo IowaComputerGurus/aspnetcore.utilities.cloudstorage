@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <Version>0.0.0</Version>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>ICG.AspNetCore.Utilities.CloudStorage</PackageId>
+    <Title>AspNetCore Utilities CloudStorage</Title>
+    <Description>A collection of utilities designed to aid in the storage of files to cloud storage locations.</Description>
+    <Copyright>Copyright 2019, IowaComputerGurus, Subject to the MIT License</Copyright>
+    <PackageProjectUrl>https://github.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage</PackageProjectUrl>
+    <PackageTags>aspnetcore;azure-storage;cloudstorage</PackageTags>
+    <RepositoryUrl>https://github.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage</RepositoryUrl>
+    <Authors>MitchelSellers;IowaComputerGurus</Authors>
+    <Owners>IowaComputerGurus</Owners>
+    <PackageIconUrl>https://raw.githubusercontent.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage/master/icgAppIcon.png</PackageIconUrl>
+    <IsPackable>True</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>ICG.AspNetCore.Utilities.CloudStorage</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ICG.AspNetCore.Utilities" Version="2.2.37" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+  </ItemGroup>
+
+</Project>
