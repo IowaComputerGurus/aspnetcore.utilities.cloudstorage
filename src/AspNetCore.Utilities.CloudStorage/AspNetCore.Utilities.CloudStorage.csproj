@@ -17,7 +17,7 @@
     <IsPackable>True</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>ICG.AspNetCore.Utilities.CloudStorage</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationIcon />
@@ -25,9 +25,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ICG.AspNetCore.Utilities" Version="2.2.37" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="ICG.AspNetCore.Utilities" Version="3.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview7.19362.4" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
