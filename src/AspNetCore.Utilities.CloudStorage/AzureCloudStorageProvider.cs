@@ -61,6 +61,17 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// <exception cref="ArgumentNullException">If [file] is null</exception>
         /// <exception cref="FileLoadException">If an error occured uploading to Azure</exception>
         Task<string> UploadIFormFileWithSlug(IFormFile file, string container, string slugContent);
+
+        /// <summary>
+        ///     Uploads the results of an IFormFile to Azure Storage, using a specific file name for the destination file
+        /// </summary>
+        /// <param name="file">The posted file to upload</param>
+        /// <param name="container">The target container</param>
+        /// <param name="desiredName">The desired name of the file, including any path/extension</param>
+        /// <returns>The path to the uploaded image</returns>
+        /// <exception cref="ArgumentNullException">If [file] is null</exception>
+        /// <exception cref="FileLoadException">If an error occured uploading to Azure</exception>
+        Task<string> UploadIFormFile(IFormFile file, string container, string desiredName);
     }
 
     /// <inheritdoc />
@@ -200,6 +211,27 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             {
                 var targetFileName = $"{urlSlug}{Path.GetExtension(file.FileName)}";
                 cdnPath = await StoreObject(container, file.OpenReadStream(), targetFileName);
+            }
+            catch (Exception ex)
+            {
+                throw new FileLoadException($"Error Uploading to Azure: {ex.Message}");
+            }
+
+            return cdnPath;
+        }
+
+        /// <inheritdoc />
+        public async Task<string> UploadIFormFile(IFormFile file, string container, string desiredName)
+        {
+            //Throw exception if no file
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+            
+            //Upload the file
+            string cdnPath;
+            try
+            {
+                cdnPath = await StoreObject(container, file.OpenReadStream(), desiredName);
             }
             catch (Exception ex)
             {
