@@ -18,5 +18,11 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// </summary>
         [Display(Name = "Base URL")]
         public string RootClientPath { get; set; }
+
+        /// <summary>
+        /// When creating a SAS Token without any specified duration how long will the token be valid
+        /// </summary>
+        [Display(Name= "Default SAS Token Duration (Minutes)")]
+        public int DefaultSASTokenDurationMinutes { get; set; } = 60;
     }
 }
