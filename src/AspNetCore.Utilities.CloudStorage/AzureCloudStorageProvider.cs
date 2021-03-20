@@ -114,16 +114,16 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             _logger.LogInformation("Creating file {url} in Azure Blob Storage", blockBlob.Uri);
 
             //Delete existing if needed
-            await blockBlob.DeleteIfExistsAsync();
+            await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
 
             //Determine content type
             _mimeTypeMapper.TryGetMimeType(desiredName, out var contentType);
             
             //Upload it
             if (string.IsNullOrEmpty(contentType))
-                await blockBlob.UploadAsync(fileContents);
+                await blockBlob.UploadAsync(fileContents).ConfigureAwait(false);
             else
-                await blockBlob.UploadAsync(fileContents, new BlobHttpHeaders{ContentType = contentType});
+                await blockBlob.UploadAsync(fileContents, new BlobHttpHeaders{ContentType = contentType}).ConfigureAwait(false);
 
             return $"{_storageOptions.Value.RootClientPath}/{desiredContainer.ToLower()}/{desiredName}";
         }
@@ -153,12 +153,13 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             //Determine content type
             _mimeTypeMapper.TryGetMimeType(desiredName, out var contentType);
 
-            await using (var memStream = new MemoryStream(fileContents, false))
+            using (var memStream = new MemoryStream(fileContents, false))
             {
                 if (string.IsNullOrEmpty(contentType))
-                    await blockBlob.UploadAsync(memStream);
+                    await blockBlob.UploadAsync(memStream).ConfigureAwait(false);
                 else
-                    await blockBlob.UploadAsync(memStream, new BlobHttpHeaders {ContentType = contentType});
+                    await blockBlob.UploadAsync(memStream, new BlobHttpHeaders {ContentType = contentType})
+                        .ConfigureAwait(false);
             }
 
             return $"{_storageOptions.Value.RootClientPath}/{desiredContainer.ToLower()}/{desiredName}";
@@ -180,7 +181,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             var blockBlob = container.GetBlobClient(objectName);
 
             //Delete
-            return await blockBlob.DeleteIfExistsAsync();
+            return await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -209,7 +210,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             try
             {
                 var targetFileName = $"{urlSlug}{Path.GetExtension(file.FileName)}";
-                cdnPath = await StoreObject(container, file.OpenReadStream(), targetFileName);
+                cdnPath = await StoreObject(container, file.OpenReadStream(), targetFileName).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -230,7 +231,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             string cdnPath;
             try
             {
-                cdnPath = await StoreObject(container, file.OpenReadStream(), desiredName);
+                cdnPath = await StoreObject(container, file.OpenReadStream(), desiredName).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
