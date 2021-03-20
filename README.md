@@ -3,11 +3,11 @@
 | --- | --- |
 | ![Master Branch Status](https://iowacomputergurus.visualstudio.com/ICG%20Open%20Source/_apis/build/status/AspNetCore%20Utilities%20CloudStorage?branchName=master) | ![Develop Branch Status](https://iowacomputergurus.visualstudio.com/ICG%20Open%20Source/_apis/build/status/AspNetCore%20Utilities%20CloudStorage?branchName=develop) |
 
-## NuGet Status
+This project provides a number of helpful wrappers around the Microsoft Azure Storage API's to allow for more rapid development.  Including the ability to do single-line upload of files from an IFormFile into Azure Blob Storage.
 
-ICG.AspNetCore.Utilities.CloudStorage  ![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg) |
+## NuGet Status (ICG.AspNetCore.Utilities.CloudStorage)
 
-A collection of helpful utilities for working with ASP.NET Core projects.  These items are used by the IowaComputerGurus Team to aid in unit testing and other common tasks
+![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg) |
 
 ## Using ICG.AspNetCore.Utilities.CloudStorage
 
@@ -32,8 +32,7 @@ Lastly, before using you will need to configure your storage options.  An exampl
 
 ```
   "AzureCloudStorageOptions": {
-    "StorageAccountName": "<Your Storage Account>",
-    "AccessKey": "<Your Access Key>",
+    "StorageConnectionString": "<Your Storage Connection String>",
     "RootClientPath": "<Either your CDN Endpoint, or Path to Blob >"
   }
 ```
@@ -52,7 +51,10 @@ NOTE: Root client path could be https://youraccount.blob.core.windows.net or if 
 Usage of this package will automatically add the following additional NuGet packages
 
 * ICG.AspNetCore.Utilities - Used to provide the IUrlSlugProvider for one overload in the ICloudStorageProvider implementation
-* Microsoft.Azure.Storage - Used to actually communicate with Azure.
+* Azure.Storage.Blobs - Used to actually communicate with Azure.
 
 Detailed information can be found in the XML Comment documentation for the objects, we are working to add to this document as well.
 
+## Version 5.x Breaking Change
+
+To adhere to Microsoft API standards the application has been updated to require the usage of a Storage Connection String, rather than a Account Name and Access Key.
