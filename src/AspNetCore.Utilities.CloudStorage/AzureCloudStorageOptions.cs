@@ -8,15 +8,10 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
     public class AzureCloudStorageOptions
     {
         /// <summary>
-        ///     The storage account name to be used
+        ///     The connection string to the blob storage account
         /// </summary>
-        [Display(Name = "Storage Account")]
-        public string StorageAccountName { get; set; }
-
-        /// <summary>
-        ///     An access key to use the storage account
-        /// </summary>
-        public string AccessKey { get; set; }
+        [Display(Name = "Connection String")]
+        public string StorageConnectionString { get; set; }
 
         /// <summary>
         ///     The root client path for the storage endpoint.  Either the CDN path, or storage account path

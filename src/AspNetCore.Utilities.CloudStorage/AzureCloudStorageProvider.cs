@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace ICG.AspNetCore.Utilities.CloudStorage
 {
@@ -72,11 +74,22 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// <exception cref="ArgumentNullException">If [file] is null</exception>
         /// <exception cref="FileLoadException">If an error occured uploading to Azure</exception>
         Task<string> UploadIFormFile(IFormFile file, string container, string desiredName);
+
+        /// <summary>
+        ///     Provides a listing of all blobs in a requested container
+        /// </summary>
+        /// <remarks>
+        ///     For very large containers this can take a long time to complete.
+        /// </remarks>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        Task<List<BlobInfo>> ListBlobs(string container);
     }
 
     /// <inheritdoc />
     public class AzureCloudStorageProvider : IAzureCloudStorageProvider
     {
+        private readonly ILogger _logger;
         private readonly IMimeTypeMapper _mimeTypeMapper;
         private readonly IOptions<AzureCloudStorageOptions> _storageOptions;
         private readonly IUrlSlugGenerator _urlSlugGenerator;
@@ -87,39 +100,42 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// <param name="storageOptions">The configuration options</param>
         /// <param name="urlSlugGenerator">The URL Slug Generator</param>
         /// <param name="mimeTypeMapper">Mime-Type mapper for proper storage</param>
+        /// <param name="logger">An ILogger for the current object</param>
         public AzureCloudStorageProvider(IOptions<AzureCloudStorageOptions> storageOptions,
-            IUrlSlugGenerator urlSlugGenerator, IMimeTypeMapper mimeTypeMapper)
+            IUrlSlugGenerator urlSlugGenerator, IMimeTypeMapper mimeTypeMapper,
+            ILogger<AzureCloudStorageProvider> logger)
         {
             _storageOptions = storageOptions;
             _urlSlugGenerator = urlSlugGenerator;
             _mimeTypeMapper = mimeTypeMapper;
+            _logger = logger;
         }
 
         /// <inheritdoc />
         public async Task<string> StoreObject(string desiredContainer, Stream fileContents, string desiredName)
         {
-            //Get the storage account
-            var storageAccount =
-                new CloudStorageAccount(
-                    new StorageCredentials(_storageOptions.Value.StorageAccountName, _storageOptions.Value.AccessKey),
-                    true);
+            //Get the client
+            var blobClient = new BlobServiceClient(_storageOptions.Value.StorageConnectionString);
 
             //Create the client & container reference
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference(desiredContainer.ToLower());
+            var container = blobClient.GetBlobContainerClient(desiredContainer.ToLower());
 
             //Get our block/blob reference
-            var blockBlob = container.GetBlockBlobReference(desiredName);
+            var blockBlob = container.GetBlobClient(desiredName);
+            _logger.LogInformation("Creating file {url} in Azure Blob Storage", blockBlob.Uri);
 
             //Delete existing if needed
-            await blockBlob.DeleteIfExistsAsync();
+            await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
 
-            //Set content type if needed
-            if (_mimeTypeMapper.TryGetMimeType(desiredName, out var contentType))
-                blockBlob.Properties.ContentType = contentType;
+            //Determine content type
+            _mimeTypeMapper.TryGetMimeType(desiredName, out var contentType);
 
             //Upload it
-            await blockBlob.UploadFromStreamAsync(fileContents);
+            if (string.IsNullOrEmpty(contentType))
+                await blockBlob.UploadAsync(fileContents).ConfigureAwait(false);
+            else
+                await blockBlob.UploadAsync(fileContents, new BlobHttpHeaders {ContentType = contentType})
+                    .ConfigureAwait(false);
 
             return $"{_storageOptions.Value.RootClientPath}/{desiredContainer.ToLower()}/{desiredName}";
         }
@@ -133,28 +149,30 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// <returns>The URL to the blob as stored.</returns>
         public async Task<string> StoreObject(string desiredContainer, byte[] fileContents, string desiredName)
         {
-            //Get the storage account
-            var storageAccount =
-                new CloudStorageAccount(
-                    new StorageCredentials(_storageOptions.Value.StorageAccountName, _storageOptions.Value.AccessKey),
-                    true);
+            //Get the client
+            var blobClient = new BlobServiceClient(_storageOptions.Value.StorageConnectionString);
 
             //Create the client & container reference
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference(desiredContainer.ToLower());
+            var container = blobClient.GetBlobContainerClient(desiredContainer.ToLower());
 
             //Get our block/blob reference
-            var blockBlob = container.GetBlockBlobReference(desiredName);
+            var blockBlob = container.GetBlobClient(desiredName);
+            _logger.LogInformation("Creating file {url} in Azure Blob Storage", blockBlob.Uri);
 
             //Delete existing if needed
             await blockBlob.DeleteIfExistsAsync();
 
-            //Set content type if needed
-            if (_mimeTypeMapper.TryGetMimeType(desiredName, out var contentType))
-                blockBlob.Properties.ContentType = contentType;
+            //Determine content type
+            _mimeTypeMapper.TryGetMimeType(desiredName, out var contentType);
 
-            //Upload it
-            await blockBlob.UploadFromByteArrayAsync(fileContents, 0, fileContents.Length);
+            using (var memStream = new MemoryStream(fileContents, false))
+            {
+                if (string.IsNullOrEmpty(contentType))
+                    await blockBlob.UploadAsync(memStream).ConfigureAwait(false);
+                else
+                    await blockBlob.UploadAsync(memStream, new BlobHttpHeaders {ContentType = contentType})
+                        .ConfigureAwait(false);
+            }
 
             return $"{_storageOptions.Value.RootClientPath}/{desiredContainer.ToLower()}/{desiredName}";
         }
@@ -167,21 +185,17 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             if (objectName == null)
                 return false;
 
-            //Get the storage account
-            var storageAccount =
-                new CloudStorageAccount(
-                    new StorageCredentials(_storageOptions.Value.StorageAccountName, _storageOptions.Value.AccessKey),
-                    true);
+            //Get the client
+            var blobClient = new BlobServiceClient(_storageOptions.Value.StorageConnectionString);
 
-            //Create the client & container reference
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference(expectedContainer.ToLower());
-
-            //Get our block/blob reference
-            var blockBlob = container.GetBlockBlobReference(objectName);
+            //Get the blob container & blob
+            var container = blobClient.GetBlobContainerClient(expectedContainer.ToLower());
+            var blockBlob = container.GetBlobClient(objectName);
+            _logger.LogInformation($"Deleting {objectName} from {expectedContainer} storage container", objectName,
+                expectedContainer);
 
             //Delete
-            return await blockBlob.DeleteIfExistsAsync();
+            return await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -210,10 +224,11 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             try
             {
                 var targetFileName = $"{urlSlug}{Path.GetExtension(file.FileName)}";
-                cdnPath = await StoreObject(container, file.OpenReadStream(), targetFileName);
+                cdnPath = await StoreObject(container, file.OpenReadStream(), targetFileName).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error uploading file with {slug} to Azure with error {message}", urlSlug, ex.Message);
                 throw new FileLoadException($"Error Uploading to Azure: {ex.Message}");
             }
 
@@ -226,19 +241,45 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             //Throw exception if no file
             if (file == null)
                 throw new ArgumentNullException(nameof(file));
-            
+
             //Upload the file
             string cdnPath;
             try
             {
-                cdnPath = await StoreObject(container, file.OpenReadStream(), desiredName);
+                cdnPath = await StoreObject(container, file.OpenReadStream(), desiredName).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error uploading file with desired name {desiredName} to Azure with error {message}",
+                    desiredName, ex.Message);
                 throw new FileLoadException($"Error Uploading to Azure: {ex.Message}");
             }
 
             return cdnPath;
+        }
+
+        /// <inheritdoc />
+        public async Task<List<BlobInfo>> ListBlobs(string container)
+        {
+            //Get the client
+            var blobClient = new BlobServiceClient(_storageOptions.Value.StorageConnectionString);
+
+            //Get the blob container & blob
+            var containerClient = blobClient.GetBlobContainerClient(container.ToLower());
+            var blobList = new List<BlobInfo>();
+            await foreach (var item in containerClient.GetBlobsAsync().ConfigureAwait(false))
+                blobList.Add(new BlobInfo
+                {
+                    ContentType = item.Properties.ContentType,
+                    CreatedDate = item.Properties.CreatedOn,
+                    DownloadPath = $"{_storageOptions.Value.RootClientPath}/{container.ToLower()}/{item.Name}",
+                    LastEditedDate = item.Properties.LastModified,
+                    ObjectName = item.Name,
+                    ObjectSize = item.Properties.ContentLength,
+                    LastAccessDate = item.Properties.LastAccessedOn
+                });
+
+            return blobList;
         }
     }
 }

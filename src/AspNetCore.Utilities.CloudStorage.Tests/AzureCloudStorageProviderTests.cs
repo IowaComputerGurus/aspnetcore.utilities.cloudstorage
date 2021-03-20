@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -10,15 +12,16 @@ namespace ICG.AspNetCore.Utilities.CloudStorage.Tests
         private readonly Mock<IUrlSlugGenerator> _urlSlugGenerator;
         private readonly Mock<IOptions<AzureCloudStorageOptions>> _azureCloudStorageOptionsMock;
         private readonly Mock<IMimeTypeMapper> _mimeTypeMapperMock;
+        private readonly Mock<ILogger<AzureCloudStorageProvider>> _loggerMock;
 
         public AzureCloudStorageProviderTests()
         {
             _azureCloudStorageOptionsMock = new Mock<IOptions<AzureCloudStorageOptions>>();
             _urlSlugGenerator = new Mock<IUrlSlugGenerator>();
             _mimeTypeMapperMock = new Mock<IMimeTypeMapper>();
+            _loggerMock = new Mock<ILogger<AzureCloudStorageProvider>>();
             _azureCloudStorageProvider = new AzureCloudStorageProvider(_azureCloudStorageOptionsMock.Object,
-                _urlSlugGenerator.Object,
-                _mimeTypeMapperMock.Object);
+                _urlSlugGenerator.Object, _mimeTypeMapperMock.Object, _loggerMock.Object);
         }
 
         [Fact]
