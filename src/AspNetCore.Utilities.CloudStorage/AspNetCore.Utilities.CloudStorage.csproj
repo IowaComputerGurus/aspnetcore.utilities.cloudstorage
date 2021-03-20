@@ -15,9 +15,13 @@
     <Owners>IowaComputerGurus</Owners>
     <PackageIconUrl>https://raw.githubusercontent.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage/master/icgAppIcon.png</PackageIconUrl>
     <IsPackable>True</IsPackable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>ICG.AspNetCore.Utilities.CloudStorage</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationIcon />
@@ -25,8 +29,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ICG.AspNetCore.Utilities" Version="3.0.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="ICG.AspNetCore.Utilities" Version="5.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
