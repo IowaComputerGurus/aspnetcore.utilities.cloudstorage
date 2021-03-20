@@ -179,6 +179,8 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             //Get the blob container & blob
             var container = blobClient.GetBlobContainerClient(expectedContainer.ToLower());
             var blockBlob = container.GetBlobClient(objectName);
+            _logger.LogInformation($"Deleting {objectName} from {expectedContainer} storage container", objectName,
+                expectedContainer);
 
             //Delete
             return await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
@@ -214,6 +216,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error uploading file with {slug} to Azure with error {message}", urlSlug, ex.Message);
                 throw new FileLoadException($"Error Uploading to Azure: {ex.Message}");
             }
 
@@ -235,6 +238,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error uploading file with desired name {desiredName} to Azure with error {message}", desiredName, ex.Message);
                 throw new FileLoadException($"Error Uploading to Azure: {ex.Message}");
             }
 
