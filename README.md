@@ -33,7 +33,8 @@ Lastly, before using you will need to configure your storage options.  An exampl
 ```
   "AzureCloudStorageOptions": {
     "StorageConnectionString": "<Your Storage Connection String>",
-    "RootClientPath": "<Either your CDN Endpoint, or Path to Blob >"
+    "RootClientPath": "<Either your CDN Endpoint, or Path to Blob >",
+    "DefaultSASTokenDurationMinutes": 60
   }
 ```
 
