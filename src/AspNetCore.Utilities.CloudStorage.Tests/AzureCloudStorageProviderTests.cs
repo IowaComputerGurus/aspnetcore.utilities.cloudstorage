@@ -1,5 +1,5 @@
 ﻿using System;
-using Castle.Core.Logging;
+using ICG.NetCore.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
