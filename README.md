@@ -1,7 +1,6 @@
 # aspnetcore.utilities.cloudstorage ![](https://img.shields.io/github/license/iowacomputergurus/aspnetcore.utilities.cloudstorage.svg)
-| Master | Develop |
-| --- | --- |
-| ![Master Branch Status](https://iowacomputergurus.visualstudio.com/ICG%20Open%20Source/_apis/build/status/AspNetCore%20Utilities%20CloudStorage?branchName=master) | ![Develop Branch Status](https://iowacomputergurus.visualstudio.com/ICG%20Open%20Source/_apis/build/status/AspNetCore%20Utilities%20CloudStorage?branchName=develop) |
+
+![Build Status](https://github.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage/actions/workflows/ci-build.yml/badge.svg)
 
 This project provides a number of helpful wrappers around the Microsoft Azure Storage API's to allow for more rapid development.  Including the ability to do single-line upload of files from an IFormFile into Azure Blob Storage.
 
