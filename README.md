@@ -14,22 +14,24 @@ This project provides a number of helpful wrappers around the Microsoft Azure St
 
 Install from NuGet
 
-```
+``` powershell
 Install-Package ICG.AspNetCore.Utilities.CloudStorage
 ```
 ### Register Dependencies
 
 Inside of of your project's Startus.cs within the RegisterServices method add this line of code.
 
-```
+``` c#
+services.UseIcgNetCoreUtilities(Configuration);
 services.UseIcgAspNetCoreUtilitiesCloudStorage();
 ```
+
 
 ## Configure
 
 Lastly, before using you will need to configure your storage options.  An example configuation is below.
 
-```
+``` json
   "AzureCloudStorageOptions": {
     "StorageConnectionString": "<Your Storage Connection String>",
     "RootClientPath": "<Either your CDN Endpoint, or Path to Blob >",
