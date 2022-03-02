@@ -8,6 +8,13 @@ This project provides a number of helpful wrappers around the Microsoft Azure St
 
 ![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg) |
 
+## SonarCloud Analysis
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=IowaComputerGurus_aspnetcore.utilities.cloudstorage&metric=alert_status)](https://sonarcloud.io/dashboard?id=IowaComputerGurus_aspnetcore.utilities.cloudstorage)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=IowaComputerGurus_aspnetcore.utilities.cloudstorage&metric=coverage)](https://sonarcloud.io/dashboard?id=IowaComputerGurus_aspnetcore.utilities.cloudstorage)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=IowaComputerGurus_aspnetcore.utilities.cloudstorage&metric=security_rating)](https://sonarcloud.io/dashboard?id=IowaComputerGurus_aspnetcore.utilities.cloudstorage)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=IowaComputerGurus_aspnetcore.utilities.cloudstorage&metric=sqale_index)](https://sonarcloud.io/dashboard?id=IowaComputerGurus_aspnetcore.utilities.cloudstorage)
+
 ## Using ICG.AspNetCore.Utilities.CloudStorage
 
 ### Installation
