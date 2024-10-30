@@ -6,7 +6,7 @@ This project provides a number of helpful wrappers around the Microsoft Azure St
 
 ## NuGet Status (ICG.AspNetCore.Utilities.CloudStorage)
 
-![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg) |
+![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg)
 
 ## SonarCloud Analysis
 
@@ -46,7 +46,11 @@ Lastly, before using you will need to configure your storage options.  An exampl
   }
 ```
 
-NOTE: Root client path could be https://youraccount.blob.core.windows.net or if you have configured a CDN your CDN path.  This is what will be used to provide the return path of uploaded objects
+> [!NOTE]
+> Root client path could be https://youraccount.blob.core.windows.net or if you have configured a CDN your CDN path.  This is what will be used to provide the return path of uploaded objects
+
+> [!WARNING]
+> Be sure to consider security of these credentials, this library fully supports `IOptions` so you can utilize environment variables, the `appsettings.json` file or any other mechanism that injects values to Configuration
 
 ### Included Features
 

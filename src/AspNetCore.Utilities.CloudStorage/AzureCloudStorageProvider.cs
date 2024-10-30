@@ -372,7 +372,7 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
                     BlobContainerName = container,
                     BlobName = objectName,
                     Resource = "b",
-                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+                    ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(tokenDuration)
                 };
                 tokenBuilder.SetPermissions(BlobSasPermissions.Read);
                 return blobClient.GenerateSasUri(tokenBuilder).ToString();
