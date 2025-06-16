@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -93,6 +94,17 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
         /// <param name="container"></param>
         /// <returns></returns>
         Task<List<BlobInfo>> ListBlobs(string container);
+
+        /// <summary>
+        ///     Allows checking to see if a blog exists in the provided container based on the full object URL
+        /// </summary>
+        /// <remarks>
+        ///     Behind the scenes this utilizes the ExistsAsync method of the BlobClient, which will return true if the blob exists or false if it does not.
+        /// </remarks>
+        /// <param name="expectedContainer">The container that this was expected in</param>
+        /// <param name="fullObjectUrl"></param>
+        /// <returns></returns>
+        Task<bool> BlobExists(string expectedContainer, string fullObjectUrl);
 
         /// <summary>
         ///     Creates a SAS token to access an object with the default duration
@@ -340,6 +352,21 @@ namespace ICG.AspNetCore.Utilities.CloudStorage
                 });
 
             return blobList;
+        }
+
+        [ExcludeFromCodeCoverage(Justification = "Would require integration test to fully validate given direct calls to Azure Blob Storage")]
+        /// <inheritdoc />
+        public async Task<bool> BlobExists(string expectedContainer, string fullObjectUrl)
+        {
+            var objectName = GetObjectName(expectedContainer, fullObjectUrl);
+            if (objectName == null)
+            {
+                return false;
+            }
+            var blobClient = new BlobServiceClient(_storageOptions.Value.StorageConnectionString);
+            var containerClient = blobClient.GetBlobContainerClient(expectedContainer.ToLower());
+            var itemClient = containerClient.GetBlobClient(objectName);
+            return await itemClient.ExistsAsync();
         }
 
         /// <inheritdoc />
