@@ -4,6 +4,10 @@
 
 This project provides a number of helpful wrappers around the Microsoft Azure Storage API's to allow for more rapid development.  Including the ability to do single-line upload of files from an IFormFile into Azure Blob Storage.
 
+## Framework Support
+
+Current package builds and tests target .NET 10.
+
 ## NuGet Status (ICG.AspNetCore.Utilities.CloudStorage)
 
 ![](https://img.shields.io/nuget/v/icg.aspnetcore.utilities.cloudstorage.svg) ![](https://img.shields.io/nuget/dt/icg.aspnetcore.utilities.cloudstorage.svg)
