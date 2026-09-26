@@ -4,7 +4,7 @@
 		<PackageId>ICG.AspNetCore.Utilities.CloudStorage</PackageId>
 		<Title>AspNetCore Utilities CloudStorage</Title>
 		<Description>A collection of utilities designed to aid in the storage of files to cloud storage locations.</Description>
-		<Copyright>Copyright 2024, IowaComputerGurus, Subject to the MIT License</Copyright>
+		<Copyright>Copyright 2024-2026, IowaComputerGurus, Subject to the MIT License</Copyright>
 		<PackageProjectUrl>https://github.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage</PackageProjectUrl>
 		<PackageTags>aspnetcore;azure-storage;cloudstorage</PackageTags>
 		<RepositoryUrl>https://github.com/IowaComputerGurus/aspnetcore.utilities.cloudstorage</RepositoryUrl>
